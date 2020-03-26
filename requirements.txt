@@ -7,5 +7,5 @@ django-import-export
 requests==2.22.0
 boto3==1.9.156
 tinys3==0.1.12
-Pillow==6.0.0
+Pillow==6.2.0
 python-resize-image==1.1.18
