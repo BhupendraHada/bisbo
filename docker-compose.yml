@@ -1,0 +1,38 @@
+version: '2'
+
+services:
+  bisbo_db:
+    container_name: bisbo_db_1
+    image: postgres:10
+    env_file:
+      - env_variables
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+  web:
+    container_name: bisbo_web_1
+    build:
+      context: .
+      dockerfile: DockerFile
+    env_file:
+      - env_variables
+    volumes:
+      - .:/code
+      - static_volume:/code/static  # <-- bind the static volume
+      - media_volume:/code/media  # <-- bind the media volume
+    ports:
+      - "8080:8080"
+  nginx:
+    container_name: bisbo_nginx_1
+    image: nginx:1.13
+    ports:
+      - 80:80
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/code/static  # <-- bind the static volume
+      - media_volume:/code/media  # <-- bind the media volume
+    depends_on:  # <-- wait for web to be "ready" before starting this service
+      - web
+volumes:
+  database_volume:
+  static_volume:
+  media_volume:

@@ -1,0 +1,17 @@
+FROM python:3
+
+ENV DJANGO_SETTINGS_MODULE=bisbo.settings
+ENV PYTHONUNBUFFERED 1
+ARG DJANGO_SETTINGS_MODULE
+ENV DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE}"
+RUN mkdir /code
+WORKDIR /code
+ADD requirements.txt /code/
+RUN pip install -r requirements.txt
+ADD . /code/
+RUN python manage.py collectstatic --no-input
+
+EXPOSE 9000
+# define the default command to run when starting the container
+CMD ["gunicorn","--timeout", "300","--chdir", "bisbo", "--bind", ":9000", "bisbo.wsgi:application"]
+
