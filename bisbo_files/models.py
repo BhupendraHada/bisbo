@@ -3,7 +3,7 @@ from accounts.models import User
 from model_utils.models import TimeStampedModel
 
 
-class BisboFiles(TimeStampedModel):
+class BisboFile(TimeStampedModel):
     PNG = "png"
     JPG = "jpg"
 
@@ -24,3 +24,18 @@ class BisboFiles(TimeStampedModel):
 
     def __str__(self):
         return self.file_name
+
+
+class UserDownloadedFile(TimeStampedModel):
+    bisbo_file = models.ForeignKey(BisboFile, on_delete=models.SET_NULL, null=True, related_name="file_download")
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="downloaded_files")
+
+    class Meta:
+        db_table = "user_downloaded_files"
+
+    def __str__(self):
+        return self.bisbo_file.file_name
+
+    @property
+    def created_date(obj):
+        return obj.created.date()
